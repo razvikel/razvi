@@ -9,7 +9,8 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faQuestion } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import VueAlertify from 'vue-alertify'
- 
+import store from './store'
+
 Vue.use(VueAlertify)
 library.add(faQuestion)
 
@@ -20,6 +21,7 @@ Vue.use(Buefy)
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
+  store,
   router,
   components: { App },
   template: '<App/>'
