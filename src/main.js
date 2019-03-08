@@ -7,12 +7,13 @@ import App from './App'
 import router from './router'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faQuestion } from '@fortawesome/free-solid-svg-icons'
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import VueAlertify from 'vue-alertify'
 import store from './store'
 
 Vue.use(VueAlertify)
-library.add(faQuestion)
+library.add(faQuestion, faTrash)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 

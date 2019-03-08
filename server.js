@@ -27,7 +27,7 @@ MongoClient.connect(url, { useNewUrlParser: true }).then(client => {
     app.post('/conversation', async (req, res) => {
         try {
             await db.collection('conversations').insertOne(req.body.conversation)
-            console.log(`added conversation ${req.body.conversation._id} to db`)
+            console.log(`added conversation to db`)
             res.send()
         } catch (err) {
             console.log(error)
@@ -35,10 +35,10 @@ MongoClient.connect(url, { useNewUrlParser: true }).then(client => {
         }
     })
 
-    app.post('/answer', async (req, res) => {
+    app.post('/answer/:conversationId', async (req, res) => {
         try {
-            await db.collection('conversations').updateOne({ _id: ObjectId(req.body.conversationId) }, { $set: { answer: req.body.answer } })
-            console.log(`updated answer for conversation ${req.body.conversationId}`)
+            await db.collection('conversations').updateOne({ _id: ObjectId(req.params.conversationId) }, { $set: { answer: req.body.answer } })
+            console.log(`updated answer for conversation ${req.params.conversationId}`)
             res.send()
         } catch (err) {
             console.log(err)
@@ -46,10 +46,10 @@ MongoClient.connect(url, { useNewUrlParser: true }).then(client => {
         }
     })
 
-    app.delete('/conversation', async (req, res) => {
+    app.delete('/conversation/:conversationId', async (req, res) => {
         try {
-            await db.collection('conversations').deleteOne({ _id: ObjectId(req.body.conversationId) })
-            console.log(`deleted conversation ${req.body.conversationId} from db`)
+            await db.collection('conversations').deleteOne({ _id: ObjectId(req.params.conversationId) })
+            console.log(`deleted conversation ${req.params.conversationId} from db`)
             res.send()
         } catch (err) {
             console.log(error)

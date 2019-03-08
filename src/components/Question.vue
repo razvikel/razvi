@@ -12,17 +12,21 @@
         <footer class="card-footer">
             <p class="card-footer-item" style="display: flex; flex-direction: row; justify-content: space-around">
                 <a style="flex: 3; font-size: 35px; color: black">
-                    <div @click="showAnswer(conversation)" v-show="isAnswered()">
-                        <b>{{ansToShow}}</b>
-                        <p v-show="ansToShow !== 'צפו בתשובה!'" class="subtitle">
+                    <div @click="showAnswer()" v-show="isAnswered()">
+                        <b v-show="answerShown">{{conversation.answer.content}}</b>
+                        <b v-show="!answerShown">צפו בתשובה!</b>
+                        <p v-show="answerShown" class="subtitle">
                             {{conversation.answer.name}} ({{new Date(conversation.answer.time).toLocaleDateString()}}
                             בשעה {{new Date(conversation.answer.time).toLocaleTimeString()}})
                         </p>
                     </div>
                     <div v-show="!isAnswered() && $store.state.managerName">
                         <b-input placeholder="ענה על השאלה..." v-model="answerToUpdate" type="textarea"></b-input>
-                        <a @click="answer($store.state.managerName)" class="button is-success">שלח!</a>
+                        <a @click="answer()" class="button is-success">שלח!</a>
                     </div>
+                    <a v-show="$store.state.managerName" class="button deleteIcon" @click="deleteConversation()">
+                        <font-awesome-icon icon="trash" style="flex: 1" class="fa-2x" />
+                    </a>
                 </a>
                 <img style="flex: 1; height: 200px; width: 200px; border-radius: 100%" src="../../images/eli.jpg">
             </p>
@@ -38,29 +42,34 @@
         props: ['conversation'],
         data() {
             return {
-                ansToShow: "צפו בתשובה!",
+                answerShown: false,
                 answerToUpdate: ""
             }
         },
         methods: {
-            showAnswer(conversation) {
-                this.ansToShow = conversation.answer.content
+            showAnswer() {
+                this.answerShown = true
             },
             isAnswered() {
                 return this.conversation.answer.content !== ""
             },
-            answer(name) {
-                axios.post('http://localhost:3000/answer', {
-                    conversationId: this.conversation._id,
+            answer() {
+                axios.post(`http://localhost:3000/answer/${this.conversation._id}`, {
                     answer: {
                         content: this.answerToUpdate,
-                        name: name,
+                        name: this.$store.state.managerName,
                         time: new Date()
                     }
                 }).then(response => {
                     this.answerToUpdate = ""
-                    this.ansToShow = "צפו בתשובה!"
                     this.$emit('conversationChange')
+                })
+            },
+            deleteConversation() {
+                axios.delete(`http://localhost:3000/conversation/${this.conversation._id}`).then(response => {
+                    this.$alertify.success('השיחה נמחקה בהצלחה!')
+                    this.$emit('conversationChange')
+                    this.showAnswer()
                 })
             }
         }
@@ -71,5 +80,11 @@
 <style scoped>
     .card {
         border-radius: 5%;
+    }
+
+    .deleteIcon {
+        border-radius: 100%;
+        background-color: grey;
+        height: 50px;
     }
 </style>

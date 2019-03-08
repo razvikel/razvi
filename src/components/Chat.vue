@@ -46,7 +46,7 @@
         let newQuestion = this.newQuestion
         newQuestion.time = new Date()
         axios.post('http://localhost:3000/conversation', { conversation: { question: newQuestion, answer: { content: "", time: new Date() } } }).then(response => {
-          this.$alertify.success(newQuestion.name + ', שאלתך נוספה בהצלחה!');
+          this.$alertify.success(newQuestion.name + ', שאלתך נוספה בהצלחה!')
           this.newQuestion = { name: "", content: "", time: "" }
           this.getConversations()
         })
