@@ -66,10 +66,19 @@
                 })
             },
             deleteConversation() {
-                axios.delete(`http://localhost:3000/conversation/${this.conversation._id}`).then(response => {
-                    this.$alertify.success('השיחה נמחקה בהצלחה!')
-                    this.$emit('conversationChange')
-                    this.showAnswer()
+                this.$swal({
+                    title: `בטוח שברצונך למחוק את השאלה של ${this.conversation.question.name}?`,
+                    text: 'לא יהיה ניתן להחזיר אותה!',
+                    type: 'warning',
+                    showCancelButton: true
+                }).then(result => {
+                    if (result.value) {
+                        axios.delete(`http://localhost:3000/conversation/${this.conversation._id}`).then(response => {
+                            this.$alertify.success('השיחה נמחקה בהצלחה!')
+                            this.$emit('conversationChange')
+                            this.showAnswer()
+                        })
+                    }
                 })
             }
         }

@@ -8,6 +8,7 @@ app.use(bodyParser.json())
 const MongoClient = require('mongodb').MongoClient;
 const url = "mongodb://localhost:27017";
 const ObjectId = require('mongodb').ObjectID
+let manager = null
 
 MongoClient.connect(url, { useNewUrlParser: true }).then(client => {
     let db = client.db('eli')
@@ -53,6 +54,24 @@ MongoClient.connect(url, { useNewUrlParser: true }).then(client => {
             res.send()
         } catch (err) {
             console.log(error)
+            res.sendStatus(500)
+        }
+    })
+
+    app.post('/validate', async (req, res) => {
+        try {
+            console.log(`checking name ${req.body.name} and password ${req.body.password}`)
+            let managers = await db.collection('managers').find({ name: req.body.name }).toArray()
+            if ((managers.length > 0) && (managers[0].password === req.body.password)) {
+                manager = req.body.name
+                console.log(`manager ${req.body.name} connected successfully`)
+                res.send(true)
+            } else {
+                console.log('validation error')
+                res.send(false)
+            }
+        } catch (err) {
+            console.log(err)
             res.sendStatus(500)
         }
     })

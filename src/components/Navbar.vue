@@ -79,6 +79,8 @@
 </template>
 
 <script>
+  import axios from 'axios'
+
   const ModalForm = {
     props: ['name', 'password'],
     template: `
@@ -108,25 +110,31 @@
                     </section>
                     <footer class="modal-card-foot">
                         <button class="button" type="button" @click="$parent.close()">סגור</button>
-                        <button class="button is-primary" @click="() => {if (connectManager()) {$parent.close()}}">התחבר!</button>
+                        <button class="button is-primary" @click="() => {connectManager()}">התחבר!</button>
                     </footer>
                 </div>
             </form>
         `,
     methods: {
-      connectManager() {
-        if (this.credentials.password === "razvi") {
-          this.$store.dispatch('changeManager', this.credentials.name)
-          return true
-        } else {
-          alert('הפרטים אינם נכונים!')
-          return false
-        }
+      async connectManager() {
+        await axios.post('http://localhost:3000/validate', { name: this.credentials.name, password: this.credentials.password }).then(response => {
+          if (response.data) {
+            this.$store.dispatch('changeManager', this.credentials.name)
+            this.$parent.close()
+          } else {
+            this.$alertify.error('שם המנהל ו/או הסיסמה שגויים!')
+          }
+        }).catch(err => {
+          this.$alertify.error('שגיאה לא ידועה בהתחברות, אנחנו מצטערים')
+        })
       }
     },
     computed: {
       credentials() {
         return { name: this.name, password: this.password }
+      },
+      managerName() {
+        return this.$store.getters.getManager
       }
     }
   }
@@ -138,12 +146,7 @@
     },
     data() {
       return {
-        isModalActive: false,
-        managers: [
-          { name: "אלי ויקלמן", password: "eli" },
-          { name: "רז ויקלמן", password: "raz" },
-          { name: "נאוה ויקלמן", password: "nava" },
-        ]
+        isModalActive: false
       }
     },
     methods: {

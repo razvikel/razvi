@@ -11,7 +11,9 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import VueAlertify from 'vue-alertify'
 import store from './store'
+import VueSweetalert2 from 'vue-sweetalert2'
 
+Vue.use(VueSweetalert2)
 Vue.use(VueAlertify)
 library.add(faQuestion, faTrash)
 
