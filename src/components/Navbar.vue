@@ -151,7 +151,11 @@
     },
     methods: {
       disconnectManager() {
-        this.$store.dispatch('changeManager', null)
+        axios.post('http://localhost:3000/disconnect').then(response => {
+          this.$store.dispatch('changeManager', null)
+        }).catch(err => {
+          this.$alertify.error('שגיאה לא ידועה בהתנתקות, אנחנו מצטערים')
+        })
       }
     },
     computed: {
