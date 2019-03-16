@@ -64,14 +64,13 @@ MongoClient.connect(url, { useNewUrlParser: true }).then(client => {
 
     app.post('/validate', async (req, res) => {
         try {
-            console.log(`checking name ${req.body.name} and password ${req.body.password}`)
             let managers = await db.collection('managers').find({ name: req.body.name }).toArray()
             if ((managers.length > 0) && (managers[0].password === req.body.password)) {
                 manager = req.body.name
                 console.log(`manager ${req.body.name} connected successfully`)
                 res.send(true)
             } else {
-                console.log('validation error')
+                console.log(`validation error for manager ${req.body.name}`)
                 res.send(false)
             }
         } catch (err) {
